@@ -8,7 +8,7 @@ struct book {
   int day, month, year;
   char adresse[MAX_ADRESSE]
   int vejnummer;
-
+ yeeetttteeeeet
 
   char title[TITLE_MAX], author[AUTHOR_MAX], publisher[PUBLISHER_MAX];
   int publishing_year;
