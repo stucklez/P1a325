@@ -23,12 +23,16 @@ int main(void){
   int i;
 
   pool[1] =
-    make_order(1, 22, 11, 1996, "kildevældet", 3, 2211, "Simon", "Mikkelsen");
+    make_order(1, 23, 11, 2018, "Kildevaeldet", 3, 2211, "Simon", "Mikkelsen");
 
+  pool[2] =
+    make_order(1, 24, 11, 2018, "Ogade", 5, 3122, "Morten", "Morten");
 
-  for(i = 0; i <=1; i++)
+  pool[3] =
+    make_order(1, 24, 11, 2018, "Nyhavnsgade", 3, 4321, "Casper", "Munk");
+
+  for(i = 1; i <=3; i++)
       prnt_order(pool[i]);
-
 
   return 0;
 }
@@ -41,13 +45,13 @@ order make_order(int status, int day, int month, int year, char *adresse, int st
   strcpy(result.adresse, adresse); result.street_number = street_number;
   result.odr_number = odr_number;
   strcpy(result.first_name, first_name); strcpy(result.last_name, last_name);
+  return result;
 }
 
 void prnt_order(order o){
-  printf("Status: %1i\n"
-         "Day: %2i / %2i - %4i\n"
-         "Adresse: %s %i\n"
-         "Name: %s %s\n",
+  printf("Status: %d\nDay: %d / %d - %d\n"
+         "Adress: %s %d\nOdr number: %d\n"
+         "Name: %s %s\n\n",
          o.status, o.day, o.month, o.year,
          o.adresse, o.street_number, o.odr_number,
          o.first_name, o.last_name);
