@@ -15,10 +15,10 @@ struct order {
 };
 typedef struct order order;
 
-void prntOrder(order o);
+/*void prntOrder(order o);
 order makeOrder(int status, int day, int month, 
                  int year, char *address, int streetNumber, 
-				 int odrNumber, char *firstName, char *lastName);
+				 int odrNumber, char *firstName, char *lastName);*/
 
 int main(void){
 	order pool[MAX_POOL_SIZE];
@@ -40,6 +40,7 @@ int main(void){
 		printf(" Input: ");
 		scanf(" %d", &adminInput);
 	
+		//exit the program
 		if(adminInput == 0){
 		system("cls");
 		printf(" Program closed\n\n");
@@ -51,13 +52,13 @@ int main(void){
 		printf(" Invalid input\n\n");
 		
 	}
-	
+			//View current pool
 			if(adminInput == 1){
 			system("cls");
 			printf(" view current pool here\n\n");
 			}
 		
-		
+		//Manual orders
 		else if(adminInput == 2){
 			system("cls");
 			printf(" Create manual orders\n\n");
@@ -68,7 +69,7 @@ int main(void){
 				case 2: printf(" FUNCTION HERE\n\n"); fileLoaded = 1; break;
 				default: printf(" Error\n\n"); fileLoaded = 1; break;
 			}
-		}
+		} //load from external file
 		else if(adminInput == 3){
 			system("cls");
 			printf(" Load from external file\n\n");
@@ -97,7 +98,7 @@ int main(void){
 			printf("\n");
 			fclose(orderlist);
 			
-		}
+		}//continue to route generator
 		else if(adminInput == 4){
 			break;
 		}
@@ -110,18 +111,18 @@ int main(void){
 	
 	return 0;
 }
-
+/*
 void prntOrder(order o){
   printf(" Status: %d\n Day: %d / %d - %d\n"
          " Adress: %s %d\n Odr number: %d\n"
          " Name: %s %s\n\n",
          o.status, o.day, o.month, o.year,
          o.address, o.streetNumber, o.odrNumber,
-         o.firstName, o.lastName);
+         o.firstName, o.lastName);*/
 }
 
 
-order makeOrder(int status, int day, int month, 
+/*order makeOrder(int status, int day, int month, 
                  int year, char *address, int streetNumber, 
 				 int odrNumber, char *firstName, char *lastName){
   order result;
@@ -132,7 +133,7 @@ order makeOrder(int status, int day, int month,
   strcpy(result.firstName, firstName); strcpy(result.lastName, lastName);
   return result;
 }
-
+*/
 
 
 
