@@ -3,6 +3,8 @@
 #include <string.h>
 #include <math.h>
 #define AMOUNT_OF_POINTS 43
+#define AMOUNT_OF_CLUSTERS 3
+#define POSTOFFICE_LOCATION 0
 
 struct points{
   char name[50];
@@ -33,10 +35,10 @@ int main(void){
     printf("Error\n");
   }
 
-  start = 0;
+  start = POSTOFFICE_LOCATION;
 
   //Finder det end point der er taettest på startpunktet.
-  for(int j = 0; cluster <= 3; j++){
+  for(int j = 0; cluster <= AMOUNT_OF_CLUSTERS; j++){
     min = 999; endpoints = 0;
     for(i = 0; i <= AMOUNT_OF_POINTS-1; i++){
       if (point[i].status == cluster) {
@@ -47,6 +49,10 @@ int main(void){
         }
       }
     }
+    //Hvis der ikke er flere endpoints gaar den tilbage til postoffice.
+    if (cluster == AMOUNT_OF_CLUSTERS && endpoints == 0) {
+      end = POSTOFFICE_LOCATION; endpoints++; cluster++;
+    }
 
     if (endpoints == 0) {
       cluster++;
@@ -56,9 +62,9 @@ int main(void){
 
       //Alle punkter faar nu en afstand til det endpoint vi lige har fundet.
       for(i=0; i <= AMOUNT_OF_POINTS-1; i++)
-        point[i].distantToEnd = sqrt(pow(point[i].x - point[end].x , 2)+pow(point[i].y - point[end].y, 2));
+        point[i].distantToEnd = sqrt(pow(point[i].x - point[end].x , 2) + pow(point[i].y - point[end].y, 2));
 
-
+      //Vi har nu et start punkt og et slutpunkt samt laenge til slutpunkt på alle punkter.
       //
       //A* skal implementeres her.
       //
@@ -67,6 +73,5 @@ int main(void){
       start = end;
     }
   }
-
   return 0;
 }
