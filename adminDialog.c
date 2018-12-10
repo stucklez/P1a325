@@ -36,11 +36,9 @@ int main(void){
 
 	if (firstInput == 2) {
 		printf("-----BRUGERDIALOG-----\n\n");
-		printf("Din pakke bliver leveret i tidsrummet\n bla til bla\n\n Kan du modtage den der? Hvis JA [1] --- Hvis NEJ [2]\n");
+		printf("Din pakke bliver leveret i tidsrummet\n\nbla til bla\n\nKan du modtage den der? Hvis JA [1] --- Hvis NEJ [2]\n");
 		scanf("%d", &userInput);
 
-
-		
 	}
 	else {
 	while(adminInput != 4){
