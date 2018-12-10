@@ -26,10 +26,23 @@ int main(void){
 	/*tmpDay, tmpMonth, tmpYear, tmpStreetNumber = 0, odrNumber = 0;
     char tmpFirstName[MAX_LEN], tmpLastName[MAX_LEN], tmpAddress[MAX_LEN];*/
 	
-	
+	int firstInput = 0;
 	int adminInput = 0;
+	int userInput = 0; 
 	int fileLoaded = 0;
 	
+	printf("Admin [1]\nBruger [2]\n");
+	scanf("%d", &firstInput);
+
+	if (firstInput == 2) {
+		printf("-----BRUGERDIALOG-----\n\n");
+		printf("Din pakke bliver leveret i tidsrummet\n bla til bla\n\n Kan du modtage den der? Hvis JA [1] --- Hvis NEJ [2]\n");
+		scanf("%d", &userInput);
+
+
+		
+	}
+	else {
 	while(adminInput != 4){
 		adminInput = 0;
 		printf(" Choose an option below: \n\n");
@@ -42,25 +55,25 @@ int main(void){
 	
 		//exit the program
 		if(adminInput == 0){
-		system("cls");
+		system("clear");
 		printf(" Program closed\n\n");
 		exit (0);
 	}
 	
 		else if(adminInput < 0 || adminInput > 4){
-		system("cls");
+		system("clear");
 		printf(" Invalid input\n\n");
 		
 	}
 			//View current pool
 			if(adminInput == 1){
-			system("cls");
-			printf(" view current pool here\n\n");
+			system("clear");
+			printf(" View current pool here\n\n");
 			}
 		
 		//Manual orders
 		else if(adminInput == 2){
-			system("cls");
+			system("clear");
 			printf(" Create manual orders\n\n");
 			printf(" [1] Create new list\n [2] Add to existing list\n\n");
 			scanf(" %d", &adminInput);
@@ -71,7 +84,7 @@ int main(void){
 			}
 		} //load from external file
 		else if(adminInput == 3){
-			system("cls");
+			system("clear");
 			printf(" Load from external file\n\n");
 			FILE *orderlist;
 			orderlist = fopen("orderlist.txt", "r");
@@ -104,12 +117,13 @@ int main(void){
 		}
 	}
 	
-	system("cls");
+	system("clear");
 	printf(" <<<<<<FUNCTION: ROUTE GENERATING>>>>>>\n\n");
 	
 	
 	
 	return 0;
+	}
 }
 /*
 void prntOrder(order o){
@@ -119,7 +133,7 @@ void prntOrder(order o){
          o.status, o.day, o.month, o.year,
          o.address, o.streetNumber, o.odrNumber,
          o.firstName, o.lastName);*/
-}
+
 
 
 /*order makeOrder(int status, int day, int month, 
