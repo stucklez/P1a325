@@ -23,43 +23,19 @@ struct connections{
 };
 typedef struct connections connections;
 
+void scanMap(points point[AMOUNT_OF_POINTS]);
+void scanConnections(connections connection[AMOUNT_OF_CONNECTIONS]);
 double lenghtBetween(int x1, int y1, int x2, int y2);
+int findLocation(points point[AMOUNT_OF_POINTS], char *name);
 
 int main(void){
   points point[AMOUNT_OF_POINTS];
   connections connection[AMOUNT_OF_CONNECTIONS];
-  int i = 0, cx = 0, cy = 0, min = 0, start = 0, end = 0, endpoints = 0, cluster = 1, current = 0;
+  int i = 0, cx = 0, cy = 0, min = 0, start = 0, end = 0, endpoints = 0, cluster = 1, current = 0, location = 0;
 
 
-  //Husk at have filen map.txt
-  FILE *map;
-  map = fopen("clusterlist.txt", "r");
-
-
-  if (map != NULL) {
-    printf("File loaded\n");
-
-    for(i = 0; i<=AMOUNT_OF_POINTS-1; i++){
-      fscanf(map,"%s (%d, %d) %d", point[i].name, &point[i].x, &point[i].y, &point[i].status);
-    }
-    fclose(map);
-  } else {
-    printf("Error\n");
-  }
-
-  map = fopen("connections.txt", "r");
-
-  if (map != NULL) {
-    printf("File2 loaded\n");
-
-    for(i = 0; i <= AMOUNT_OF_CONNECTIONS-1; i++){
-      fscanf(map,"%s -- %s", connection[i].firstPoint, connection[i].secondPoint);
-    }
-
-    fclose(map);
-  } else {
-    printf("Error2\n");
-  }
+  scanMap(point);
+  scanConnections(connection);
 
 
   start = POSTOFFICE_LOCATION;
@@ -69,7 +45,7 @@ int main(void){
     min = 999; endpoints = 0;
     for(i = 0; i <= AMOUNT_OF_POINTS-1; i++){
       if (point[i].status == cluster) {
-        point[i].distantToEnd = lenghtBetween(point[start].x, point[start].y, point[i].x, point[i].y); //sqrt(pow(point[i].x - point[start].x , 2)+pow(point[i].y - point[start].y, 2));
+        point[i].distantToEnd = lenghtBetween(point[start].x, point[start].y, point[i].x, point[i].y);
         endpoints++;
         if (point[i].distantToEnd <= min) {
           min = point[i].distantToEnd; end = i;
@@ -95,12 +71,14 @@ int main(void){
       current = start;
       for(i = 0; i<=AMOUNT_OF_CONNECTIONS-1; i++){
         if (strcmp(point[current].name, connection[i].firstPoint) == 0) {
-          
-          printf("%s -> (%s)\n", point[current].name, connection[i].secondPoint);
+          location = findLocation(point, connection[i].secondPoint);
+          connection[i].lenght = lenghtBetween(point[current].x, point[current].y, point[location].x, point[location].y);
+          printf("%s -> (%s, %lf)\n", point[current].name, connection[i].secondPoint, connection[i].lenght);
           }
 
         if (strcmp(point[current].name, connection[i].secondPoint) == 0) {
           printf("%s -> (%s)\n", point[current].name, connection[i].firstPoint);
+
         }
       }
 
@@ -116,6 +94,46 @@ int main(void){
   return 0;
 }
 
+void scanMap(points point[AMOUNT_OF_POINTS]){
+
+  FILE *map;
+  map = fopen("clusterlist.txt", "r");
+
+  if (map != NULL) {
+    printf("File loaded\n");
+
+    for(int i = 0; i<=AMOUNT_OF_POINTS-1; i++){
+      fscanf(map,"%s (%d, %d) %d", point[i].name, &point[i].x, &point[i].y, &point[i].status);
+    }
+    fclose(map);
+  } else {
+    printf("Error\n");
+  }
+}
+
+void scanConnections(connections connection[AMOUNT_OF_CONNECTIONS]){
+  FILE *map;
+  map = fopen("connections.txt", "r");
+
+  if (map != NULL) {
+    printf("File2 loaded\n");
+    for(int i = 0; i <= AMOUNT_OF_CONNECTIONS-1; i++){
+      fscanf(map,"%s -- %s", connection[i].firstPoint, connection[i].secondPoint);
+    }
+    fclose(map);
+  } else {
+    printf("Error2\n");
+  }
+}
+
 double lenghtBetween(int x1, int y1, int x2, int y2) {
   return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
+
+int findLocation(points point[AMOUNT_OF_POINTS], char *name){
+  for(int i = 0; i <= AMOUNT_OF_POINTS; i++){
+    if (strcmp(name, point[i].name) == 0) {
+      return i;
+    }
+  }
 }
