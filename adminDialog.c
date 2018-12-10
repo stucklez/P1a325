@@ -11,7 +11,7 @@ struct order {
   char address[MAX_LEN];
   int streetNumber;
   int odrNumber;
-  char firstName[MAX_LEN], lastName[MAX_LEN];
+  char firstName[MAX_LEN], lastName[MAX_LEN]; 
 };
 typedef struct order order;
 
@@ -22,22 +22,39 @@ order makeOrder(int status, int day, int month,
 
 int main(void){
 	order pool[MAX_POOL_SIZE];
-    int i, r = 0; 
+    int i, j, r = 0; 
 	/*tmpDay, tmpMonth, tmpYear, tmpStreetNumber = 0, odrNumber = 0;
     char tmpFirstName[MAX_LEN], tmpLastName[MAX_LEN], tmpAddress[MAX_LEN];*/
-	
+	int usrNumber = 0; 
 	int firstInput = 0;
 	int adminInput = 0;
-	int userInput = 0; 
+	int userInput = 0;
+	int userOrderNr = 0;
 	int fileLoaded = 0;
 	
 	printf("Admin [1]\nBruger [2]\n");
 	scanf("%d", &firstInput);
 
 	if (firstInput == 2) {
-		printf("-----BRUGERDIALOG-----\n\n");
+		printf("-----BRUGERDIALOG-----\n\nIndtast Ordrenummer\n");
+		scanf("%d", &userOrderNr);
+		for (j = 0; j < MAX_POOL_SIZE; j++) {
+			if (pool[j].odrNumber == userOrderNr) {
+				usrNumber = j;
+			}
+		}
 		printf("Din pakke bliver leveret i tidsrummet\n\nbla til bla\n\nKan du modtage den der? Hvis JA [1] --- Hvis NEJ [2]\n");
 		scanf("%d", &userInput);
+		if (userInput == 1) {
+			pool[usrNumber].status = 1;
+		}
+		if (userInput == 2) {
+			pool[userOrderNr].status = 2;
+		}
+		else {
+			printf("Fuck dig prøv igen\n");
+		}
+
 
 	}
 	else {
