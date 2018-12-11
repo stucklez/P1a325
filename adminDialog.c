@@ -18,6 +18,7 @@ typedef struct order order;
 void readFile (order *pool, int *fileLoaded);
 void userDialog (order *pool);
 void prntOrder(order *pool);
+void manual_order(order *pool);
 /*order makeOrder(int status, int day, int month, 
                  int year, char *address, int streetNumber, 
                  int odrNumber, char *firstName, char *lastName);*/
@@ -27,7 +28,6 @@ int main(void){
 	int fileLoaded = 0 ; 
 	readFile (pool, &fileLoaded);
     userDialog(pool);
-   
     
     
     return 0;
@@ -134,18 +134,15 @@ void userDialog (order *pool) {
             //Manual orders
             else if(adminInput == 2){
                 system("clear");
-                printf(" Create manual orders\n\n");
-                printf(" [1] Create new list\n [2] Add to existing list\n\n");
-                scanf(" %d", &adminInput);
-                switch(adminInput){
-                    case 1: printf(" FUNCTION HERE\n\n"); fileLoaded = 1; break;
-                    case 2: printf(" FUNCTION HERE\n\n"); fileLoaded = 1; break;
-                    default: printf(" Error\n\n"); fileLoaded = 1; break;
-                }
-            } //load from external file
+				manual_order(pool);
+            } //Print loaded file.
             else if(adminInput == 3){
-
-                
+		
+				for(i=0;i < MAX_POOL_SIZE;i++){
+					printf(" %-12s %-12s | %-15s %-5d | %-5d|\n", 
+               		pool[i].firstName, pool[i].lastName, pool[i].address,
+        	   		pool[i].streetNumber, pool[i].odrNumber);
+				}
             }//continue to route generator
             else if(adminInput == 4){
                 break;
@@ -180,4 +177,16 @@ void readFile (order *pool, int *fileLoaded) {
             }
             printf("\n");
             fclose(orderlist);
-            }
+}
+void manual_order(order *pool){
+
+	printf("Enter manual order\n Firstname Lastname - Adress Streetnumber - Ordernumber\n");
+
+	scanf("%s %s - %s %d - %d", pool[MAX_POOL_SIZE+1].firstName, pool[MAX_POOL_SIZE+1].lastName, pool[MAX_POOL_SIZE+1].address, 
+		              			&pool[MAX_POOL_SIZE+1].streetNumber, &pool[MAX_POOL_SIZE+1].odrNumber);
+
+
+	printf("%s %s - %s %d - %d", pool[MAX_POOL_SIZE+1].firstName, pool[MAX_POOL_SIZE+1].lastName, pool[MAX_POOL_SIZE+1].address, 
+		              			 pool[MAX_POOL_SIZE+1].streetNumber, pool[MAX_POOL_SIZE+1].odrNumber);
+}
+
