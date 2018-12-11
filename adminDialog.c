@@ -15,8 +15,8 @@ struct order {
 };
 typedef struct order order;
 
-/*void prntOrder(order o);
-order makeOrder(int status, int day, int month, 
+void prntOrder(order o);
+/*order makeOrder(int status, int day, int month, 
                  int year, char *address, int streetNumber, 
 				 int odrNumber, char *firstName, char *lastName);*/
 
@@ -82,8 +82,11 @@ int main(void){
 	}
 			//View current pool
 			if(adminInput == 1){
+
+			//system("cls") eller system("clear"). hvad der virker
 			system("clear");
 			printf(" View current pool here\n\n");
+			prntOrder(o);
 			}
 		
 		//Manual orders
@@ -140,14 +143,14 @@ int main(void){
 	return 0;
 	}
 }
-/*
+
 void prntOrder(order o){
   printf(" Status: %d\n Day: %d / %d - %d\n"
          " Adress: %s %d\n Odr number: %d\n"
          " Name: %s %s\n\n",
          o.status, o.day, o.month, o.year,
          o.address, o.streetNumber, o.odrNumber,
-         o.firstName, o.lastName);*/
+         o.firstName, o.lastName);
 
 
 
