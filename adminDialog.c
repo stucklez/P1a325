@@ -32,9 +32,11 @@ int main(void){
 	int userOrderNr = 0;
 	int fileLoaded = 0;
 	
+	/* Prompt for om der skal gives adgang til bruger eller admin dialog*/
+
 	printf("Admin [1]\nBruger [2]\n");
 	scanf("%d", &firstInput);
-
+	/* Bruger dialog: Først bliver der promptet for ordrenumret, så ordren kan findes i den indlæste data.*/
 	if (firstInput == 2) {
 		printf("-----BRUGERDIALOG-----\n\nIndtast Ordrenummer\n");
 		scanf("%d", &userOrderNr);
@@ -43,6 +45,7 @@ int main(void){
 				usrNumber = j;
 			}
 		}
+	/* Brugerens pakke blive vist med tilhørende leverings information (Estimeret tid) og brugeren bliver spurgt om de kan modtage pakken*/
 		printf("Din pakke bliver leveret i tidsrummet\n\nbla til bla\n\nKan du modtage den der? Hvis JA [1] --- Hvis NEJ [2]\n");
 		scanf("%d", &userInput);
 		if (userInput == 1) {
