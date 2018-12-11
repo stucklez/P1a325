@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,14 +35,52 @@ int main(void){
 }
 
 void prntOrder(order *pool, int *fileLoaded){
+=======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LEN 50
+#define MAX_POOL_SIZE 20
+
+struct order {
+  int status;
+  int day, month, year;
+  char address[MAX_LEN];
+  int streetNumber;
+  int odrNumber;
+  char firstName[MAX_LEN], lastName[MAX_LEN]; 
+};
+typedef struct order order;
+
+void userDialog (order *pool);
+void prntOrder(order *pool);
+void manual_order(order *pool);
+/*order makeOrder(int status, int day, int month, 
+                 int year, char *address, int streetNumber, 
+				 int odrNumber, char *firstName, char *lastName);*/
+
+int main(void){
+	order pool[MAX_POOL_SIZE+1];
+	userDialog(pool);
+
+	
+	
+	
+	return 0;
+
+}
+
+void prntOrder(order *pool){
+>>>>>>> Stashed changes
 int i; 
-for (i = 0; i < MAX_POOL_SIZE; i++) {
+for (i = 0; i < MAX_POOL_SIZE+1; i++) {
   printf(" Status: %d\n Day: %d / %d - %d\n"
          " Adress: %s %d\n Odr number: %d\n"
          " Name: %s %s\n\n",
          pool[i].status, pool[i].day, pool[i].month, pool[i].year,
-         pool[i].address, pool[i].streetNumber, pool[i].odrNumber,
-         pool[i].firstName, pool[i].lastName);
+         pool[MAX_POOL_SIZE+1].address, pool[MAX_POOL_SIZE+1].streetNumber, pool[MAX_POOL_SIZE+1].odrNumber,
+         pool[MAX_POOL_SIZE+1].firstName, pool[MAX_POOL_SIZE+1].lastName);
 }
 }
 
@@ -138,7 +177,7 @@ void userDialog (order *pool) {
 				scanf(" %d", &adminInput);
 				switch(adminInput){
 					case 1: printf(" FUNCTION HERE\n\n"); fileLoaded = 1; break;
-					case 2: printf(" FUNCTION HERE\n\n"); fileLoaded = 1; break;
+					case 2: printf(" FUNCTION HERE\n\n"); fileLoaded = 1; manual_order(pool); break;
 					default: printf(" Error\n\n"); fileLoaded = 1; break;
 				}
 			} //load from external file
@@ -153,6 +192,7 @@ void userDialog (order *pool) {
 		
 		system("clear");
 		printf(" <<<<<<FUNCTION: ROUTE GENERATING>>>>>>\n\n");
+<<<<<<< Updated upstream
 }
 }
 
@@ -182,3 +222,20 @@ void readFile (order *pool, int *fileLoaded) {
 			printf("\n");
 			fclose(orderlist);
 			}
+=======
+}
+}
+
+void manual_order(order *pool){
+
+	printf("Enter manual order\n Firstname Lastname - Adress Streetnumber - Ordernumber\n");
+
+	scanf("%s %s - %s %d - %d", pool[MAX_POOL_SIZE+1].firstName, pool[MAX_POOL_SIZE+1].lastName, pool[MAX_POOL_SIZE+1].address, 
+		              			&pool[MAX_POOL_SIZE+1].streetNumber, &pool[MAX_POOL_SIZE+1].odrNumber);
+
+
+	printf("%s %s - %s %d - %d", pool[MAX_POOL_SIZE+1].firstName, pool[MAX_POOL_SIZE+1].lastName, pool[MAX_POOL_SIZE+1].address, 
+		              			 pool[MAX_POOL_SIZE+1].streetNumber, pool[MAX_POOL_SIZE+1].odrNumber);
+}
+
+>>>>>>> Stashed changes
