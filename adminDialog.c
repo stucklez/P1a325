@@ -33,7 +33,7 @@ int main(void){
     return 0;
 
 }
-
+// Printer nuværende order pool.
 void prntOrder(order *pool){
 int i; 
 for (i = 0; i < MAX_POOL_SIZE; i++) {
@@ -58,7 +58,7 @@ for (i = 0; i < MAX_POOL_SIZE; i++) {
   return result;
 }
 */
-
+// Starten til vores brugerdialog.
 void userDialog (order *pool) {
     int i, j, r = 0; 
         /*tmpDay, tmpMonth, tmpYear, tmpStreetNumber = 0, odrNumber = 0;
@@ -77,7 +77,7 @@ void userDialog (order *pool) {
         scanf("%d", &firstInput);
         /* Bruger dialog: Først bliver der promptet for ordrenumret, så ordren kan findes i den indlæste data.*/
         if (firstInput == 2) {
-            printf("-----BRUGERDIALOG-----\n\nIndtast Ordrenummer\n");
+            printf("-----ReceiverDialog-----\n\nWrite your Ordernumber\n");
             scanf("%d", &userOrderNr);
             for (j = 0; j < MAX_POOL_SIZE; j++) {
                 if (pool[j].odrNumber == userOrderNr) {
@@ -85,7 +85,7 @@ void userDialog (order *pool) {
                 }
             }
         /* Brugerens pakke blive vist med tilhørende leverings information (Estimeret tid) og brugeren bliver spurgt om de kan modtage pakken*/
-            printf("Din pakke bliver leveret i tidsrummet\n\nbla til bla\n\nKan du modtage den der? Hvis JA [1] --- Hvis NEJ [2]\n");
+            printf("Your package will be delivered between \n\nbla to bla\n\nCan you receive it at that time? If yes [1] --- If no [2]\n");
             scanf("%d", &userInput);
             if (userInput == 1) {
                 pool[usrNumber].status = 1;
@@ -94,16 +94,18 @@ void userDialog (order *pool) {
                 pool[userOrderNr].status = 2;
             }
             if (userInput != 1 || userInput != 2) {
-                printf("Fuck dig prøv igen\n");
+                printf("Wrong number! Try again\n");
             }
 
 
         }
         else {
+			//Start af admin dialog.
         while(adminInput != 4){
             adminInput = 0;
             printf(" Choose an option below: \n\n");
             printf(" [1] View Current pool\n [2] Create manual orders\n [3] See content from external file\n [0] Exit program\n");
+			//Her skal denne mulighed kun komme hvis filen er loaded.
             if(fileLoaded){
             printf(" [4] Continue\n\n");
         }
@@ -124,8 +126,6 @@ void userDialog (order *pool) {
         }
                 //View current pool
                 if(adminInput == 1){
-
-                //system("cls") eller system("clear"). hvad der virker
                 system("clear");
                 printf(" View current pool here\n\n");
                 prntOrder(pool);
@@ -154,7 +154,7 @@ void userDialog (order *pool) {
         printf(" <<<<<<FUNCTION: ROUTE GENERATING>>>>>>\n\n");
 }
 }
-
+//Læser filen ind.
 void readFile (order *pool, int *fileLoaded) {
     int i;
             system("clear");
@@ -178,6 +178,7 @@ void readFile (order *pool, int *fileLoaded) {
             printf("\n");
             fclose(orderlist);
 }
+//Starten på hvor vi kan sætte vores manualle ordre ind.
 void manual_order(order *pool){
 
 	printf("Enter manual order\n Firstname Lastname - Adress Streetnumber - Ordernumber\n");
