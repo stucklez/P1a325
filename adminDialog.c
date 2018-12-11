@@ -24,7 +24,6 @@ void prntOrder(order *pool);
 
 int main(void){
 	order pool[MAX_POOL_SIZE];
-	int fileLoaded = 0;
 	userDialog(pool);
 	
 	
@@ -33,7 +32,7 @@ int main(void){
 
 }
 
-void prntOrder(order *pool, int *fileLoaded){
+void prntOrder(order *pool){
 int i; 
 for (i = 0; i < MAX_POOL_SIZE; i++) {
   printf(" Status: %d\n Day: %d / %d - %d\n"
@@ -67,7 +66,7 @@ void userDialog (order *pool) {
 		int adminInput = 0;
 		int userInput = 0;
 		int userOrderNr = 0;
-		 
+		int fileLoaded = 0; 
 
 		
 		/* Prompt for om der skal gives adgang til bruger eller admin dialog*/
@@ -143,7 +142,8 @@ void userDialog (order *pool) {
 				}
 			} //load from external file
 			else if(adminInput == 3){
-		
+				readFile(pool, fileLoaded);
+				
 			}//continue to route generator
 			else if(adminInput == 4){
 				break;
@@ -158,7 +158,8 @@ void userDialog (order *pool) {
 
 void readFile (order *pool, int *fileLoaded) {
 	int i;
-			
+			system("clear");
+			printf(" Load from external file\n\n");
 			FILE *orderlist;
 			orderlist = fopen("orderlist.txt", "r");
 			fileLoaded = 1;
@@ -177,7 +178,9 @@ void readFile (order *pool, int *fileLoaded) {
 				   pool[i].firstName, pool[i].lastName, pool[i].address, 
 	              &pool[i].streetNumber, &pool[i].odrNumber);
 									   
-			
+			printf(" %-12s %-12s | %-15s %-5d | %-5d|\n", 
+			       pool[i].firstName, pool[i].lastName, pool[i].address,
+            	   pool[i].streetNumber, pool[i].odrNumber);
 			}
 			printf("\n");
 			fclose(orderlist);
