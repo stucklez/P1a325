@@ -137,7 +137,7 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
       //Printer array Paths
       for(i = 0; i <= path; i++)
         for(int o = 0; o <= a-1; o++){
-          printf("%s\n", point[paths[i][o]].name);
+          printf("%s %d\n", point[paths[i][o]].name, paths[i][MAX_LEN]);
         }
 
       //Efter at have fundet en rute fra start til slut aendre den end til start og repeater
