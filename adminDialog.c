@@ -54,7 +54,7 @@ int main(void){
 		if (userInput == 2) {
 			pool[userOrderNr].status = 2;
 		}
-		else {
+		if (userInput != 1 || userInput != 2) {
 			printf("Fuck dig prøv igen\n");
 		}
 
