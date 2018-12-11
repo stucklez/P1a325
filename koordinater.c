@@ -19,24 +19,66 @@ typedef struct points points;
 struct connections{
   char firstPoint[MAX_LEN];
   char secondPoint[MAX_LEN];
-  double lenght;
 };
 typedef struct connections connections;
 
 void scanMap(points point[AMOUNT_OF_POINTS]);
 void scanConnections(connections connection[AMOUNT_OF_CONNECTIONS]);
+void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_OF_CONNECTIONS]);
 double lenghtBetween(int x1, int y1, int x2, int y2);
 int findLocation(points point[AMOUNT_OF_POINTS], char *name);
 
 int main(void){
   points point[AMOUNT_OF_POINTS];
   connections connection[AMOUNT_OF_CONNECTIONS];
-  int i = 0, cx = 0, cy = 0, min = 0, start = 0, end = 0, endpoints = 0, cluster = 1, current = 0, location = 0;
-
 
   scanMap(point);
   scanConnections(connection);
 
+  createRoute(point, connection);
+
+  return 0;
+}
+
+//Funktion der skanner roadmap fra tekstfil, det vil sige punkter, status og clusters.
+void scanMap(points point[AMOUNT_OF_POINTS]){
+
+  FILE *map;
+  map = fopen("clusterlist.txt", "r");
+
+  if (map != NULL) {
+    printf("File loaded\n");
+
+    for(int i = 0; i<=AMOUNT_OF_POINTS-1; i++){
+      fscanf(map,"%s (%d, %d) %d", point[i].name, &point[i].x, &point[i].y, &point[i].status);
+    }
+    fclose(map);
+  } else {
+    printf("Error\n");
+  }
+}
+
+//Function that loads textfile with each connection between points.
+void scanConnections(connections connection[AMOUNT_OF_CONNECTIONS]){
+  FILE *map;
+  map = fopen("connections.txt", "r");
+
+  if (map != NULL) {
+    printf("File2 loaded\n");
+    for(int i = 0; i <= AMOUNT_OF_CONNECTIONS-1; i++){
+      fscanf(map,"%s -- %s", connection[i].firstPoint, connection[i].secondPoint);
+    }
+    fclose(map);
+  } else {
+    printf("Error2\n");
+  }
+}
+
+//Function that creates a route using A* algorithm with the data scanned in "scanMap" & "scanConnections".
+void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_OF_CONNECTIONS]){
+  int i = 0, cx = 0, cy = 0, min = 0, start = 0, end = 0,
+      endpoints = 0, cluster = 1, current = 0, location = 0;
+  int paths[MAX_LEN][MAX_LEN], path = 0, a = 0;
 
   start = POSTOFFICE_LOCATION;
 
@@ -67,69 +109,50 @@ int main(void){
       for(i=0; i <= AMOUNT_OF_POINTS-1; i++)
         point[i].distantToEnd = lenghtBetween(point[end].x, point[i].x, point[end].y, point[i].y);
 
-
+      path = -1; a = 0;
       current = start;
-      for(i = 0; i<=AMOUNT_OF_CONNECTIONS-1; i++){
-        if (strcmp(point[current].name, connection[i].firstPoint) == 0) {
-          location = findLocation(point, connection[i].secondPoint);
-          connection[i].lenght = lenghtBetween(point[current].x, point[current].y, point[location].x, point[location].y);
-          printf("%s -> (%s, %lf)\n", point[current].name, connection[i].secondPoint, connection[i].lenght);
+
+      //Leder efter connections der indeholder current point og tildeler Location det punkt current haenger sammen med.
+      for(i = 0; i <= AMOUNT_OF_CONNECTIONS-1; i++){
+        if (strcmp(point[current].name, connection[i].firstPoint) == 0
+            || strcmp(point[current].name, connection[i].secondPoint) == 0) {
+          if (strcmp(point[current].name, connection[i].firstPoint) == 0) {
+            location = findLocation(point, connection[i].secondPoint);
+          } else if (strcmp(point[current].name, connection[i].secondPoint) == 0) {
+            location = findLocation(point, connection[i].firstPoint);
           }
 
-        if (strcmp(point[current].name, connection[i].secondPoint) == 0) {
-          printf("%s -> (%s)\n", point[current].name, connection[i].firstPoint);
+          //Laver paths og saetter dem i 2d array Paths.
+          if (a == 0) {
+            path++;
+          }
+          paths[path][a] = location;
+          paths[path][MAX_LEN] = lenghtBetween(point[current].x, point[current].y, point[location].x, point[location].y) + point[location].distantToEnd;
+          printf("%s -> %s\n", point[current].name, point[location].name);
 
+          a++;
         }
       }
 
-      //Vi har nu et start punkt og et slutpunkt samt laenge til slutpunkt på alle punkter.
-      //
-      //A* skal implementeres her.
-      //
+      //Printer array Paths
+      for(i = 0; i <= path; i++)
+        for(int o = 0; o <= a-1; o++){
+          printf("%s\n", point[paths[i][o]].name);
+        }
 
+      //Efter at have fundet en rute fra start til slut aendre den end til start og repeater
       point[end].status = 0;
       start = end;
     }
   }
-  return 0;
 }
 
-void scanMap(points point[AMOUNT_OF_POINTS]){
-
-  FILE *map;
-  map = fopen("clusterlist.txt", "r");
-
-  if (map != NULL) {
-    printf("File loaded\n");
-
-    for(int i = 0; i<=AMOUNT_OF_POINTS-1; i++){
-      fscanf(map,"%s (%d, %d) %d", point[i].name, &point[i].x, &point[i].y, &point[i].status);
-    }
-    fclose(map);
-  } else {
-    printf("Error\n");
-  }
-}
-
-void scanConnections(connections connection[AMOUNT_OF_CONNECTIONS]){
-  FILE *map;
-  map = fopen("connections.txt", "r");
-
-  if (map != NULL) {
-    printf("File2 loaded\n");
-    for(int i = 0; i <= AMOUNT_OF_CONNECTIONS-1; i++){
-      fscanf(map,"%s -- %s", connection[i].firstPoint, connection[i].secondPoint);
-    }
-    fclose(map);
-  } else {
-    printf("Error2\n");
-  }
-}
-
+//Funktion der beregner laenge mellem to punkter
 double lenghtBetween(int x1, int y1, int x2, int y2) {
   return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
+//Funktion der finder en lokation til et punkt ud fra punktets navn.
 int findLocation(points point[AMOUNT_OF_POINTS], char *name){
   for(int i = 0; i <= AMOUNT_OF_POINTS; i++){
     if (strcmp(name, point[i].name) == 0) {
