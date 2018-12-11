@@ -24,8 +24,10 @@ void prntOrder(order *pool);
 
 int main(void){
     order pool[MAX_POOL_SIZE];
+	int fileLoaded = 0 ; 
+	readFile (pool, &fileLoaded);
     userDialog(pool);
-    
+   
     
     
     return 0;
@@ -142,7 +144,7 @@ void userDialog (order *pool) {
                 }
             } //load from external file
             else if(adminInput == 3){
-                readFile(pool, fileLoaded);
+
                 
             }//continue to route generator
             else if(adminInput == 4){
@@ -162,7 +164,7 @@ void readFile (order *pool, int *fileLoaded) {
             printf(" Load from external file\n\n");
             FILE *orderlist;
             orderlist = fopen("orderlist.txt", "r");
-            fileLoaded = 1;
+            *fileLoaded = 1;
             
             if (orderlist != NULL){
                 printf(" <File loaded>\n\n");
@@ -170,17 +172,11 @@ void readFile (order *pool, int *fileLoaded) {
             else{
                 printf(" <Error loading file>\n\n");
             }
-            printf("         Name                        Address        Order\n");
-            printf(" __________________________________________________________\n");
             
             for(i = 0; i != MAX_POOL_SIZE; i++){
                 fscanf(orderlist,"%s %s - %s %d - %d", 
                    pool[i].firstName, pool[i].lastName, pool[i].address, 
                   &pool[i].streetNumber, &pool[i].odrNumber);
-                                       
-            printf(" %-12s %-12s | %-15s %-5d | %-5d|\n", 
-                   pool[i].firstName, pool[i].lastName, pool[i].address,
-            	   pool[i].streetNumber, pool[i].odrNumber);
             }
             printf("\n");
             fclose(orderlist);
