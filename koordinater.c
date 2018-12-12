@@ -84,7 +84,8 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
   start = POSTOFFICE_LOCATION;
 
   //Finder det end point der er taettest på startpunktet.
-  for(int j = 0; cluster <= AMOUNT_OF_CLUSTERS; j++){
+//  for(int j = 0; cluster <= AMOUNT_OF_CLUSTERS; j++){
+    int j = 0;
     min = 999; endpoints = 0;
     for(i = 0; i <= AMOUNT_OF_POINTS-1; i++){
       if (point[i].status == cluster) {
@@ -111,8 +112,10 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
         point[i].distantToEnd = lenghtBetween(point[end].x, point[i].x, point[end].y, point[i].y);
 
       path = 0; a = 0;
-      current = start;
+      current = 18;
       paths[path][MAX_LEN-1] = 0;
+
+      //while(current != end){
 
       //Leder efter connections der indeholder current point og tildeler Location det punkt current haenger sammen med.
       for(i = 0; i <= AMOUNT_OF_CONNECTIONS-1; i++){
@@ -125,8 +128,11 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
           }
 
           if (p > 0) {
+            paths[path][MAX_LEN-2] = a;
             path++;
+            currentpath = path;
             paths[path][MAX_LEN-1] = 0;
+            a = 0;
           }
           p++;
 
@@ -139,16 +145,29 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
       p=0;
       //Printer array Paths
       for(i = 0; i <= path; i++){
-        for(int o = 0; o <= a; o++){
+        for(int o = 0; o <= paths[path][MAX_LEN-2]; o++){
           printf("%d %d %s %d\n", i, o, point[paths[i][o]].name, paths[i][MAX_LEN-1]);
         }
       }
+      min = 999;
+      for (i = 0; i <= path; i++){
+        if (paths[i][MAX_LEN-1] <= min) {
+          min = paths[i][MAX_LEN-1];
+          location = i;
+        }
+      }
+
+      printf("The best choice: %s\n", point[paths[location][0]].name);
+      current = location;
+
+    //}
+      //-----------------------------
 
       //Efter at have fundet en rute fra start til slut aendre den end til start og repeater
       point[end].status = 0;
       start = end;
     }
-  }
+  //}
 }
 
 //Funktion der beregner laengde mellem to punkter
