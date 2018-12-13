@@ -114,11 +114,13 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
 
       current = start;
       currentpath = 0;
-      for(i = 0; i <= path; i++){
-        paths[currentpath][MAX_LEN-1] = 0;
-        paths[currentpath][MAX_LEN-2] = 0;
+      for(i = 0; i <= path+1; i++){
+        paths[i][MAX_LEN-1] = 0;
+        paths[i][MAX_LEN-2] = 0;
+        //printf("%d %d\n", paths[i][MAX_LEN-1], paths[i][MAX_LEN-2]);
       }
       path = 0; a = -1;
+      startscore = 0;
 
       while(current != end){
 
@@ -146,6 +148,7 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
             a++;
           }
           p++;
+          //printf("%d\n", paths[currentpath][MAX_LEN-1]);
           paths[currentpath][a] = location;
           paths[currentpath][MAX_LEN-1] += lenghtBetween(point[current].x, point[current].y, point[location].x, point[location].y) + point[location].distantToEnd;
           printf("%d %d %s -> %s %d\n", currentpath, a, point[current].name, point[location].name, paths[currentpath][MAX_LEN-1]);
@@ -167,14 +170,13 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
         }
       }
 
-      printf("The best choice: %s\n", point[paths[location][0]].name);
+      //printf("The best choice: %s\n", point[paths[location][0]].name);
       currentpath = location;
 
       startscore = paths[currentpath][MAX_LEN-1];
-      //This needs fixing
 
-      printf("Points in current path: %d\n", paths[currentpath][MAX_LEN-2]);
-      //current = paths[currentpath][MAX_LEN-2];
+      //printf("Points in current path: %d\n", paths[currentpath][MAX_LEN-2]);
+
       for(i=0; i<= paths[currentpath][MAX_LEN-2]; i++){
         current = paths[currentpath][i];
       }
