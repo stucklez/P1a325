@@ -79,7 +79,7 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
   int i = 0, cx = 0, cy = 0, min = 0, start = 0, end = 0,
       endpoints = 0, cluster = 1, current = 0, location = 0;
   int paths[MAX_LEN][MAX_LEN], path = 0, a = 0, p = 0, currentpath = 0;
-  int score[MAX_LEN], startscore =0;
+  int score[MAX_LEN], startscore = 0, duplicate = 0;
 
   start = POSTOFFICE_LOCATION;
 
@@ -109,7 +109,7 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
 
       //Alle punkter faar nu en afstand til det endpoint vi lige har fundet.
       for(i=0; i <= AMOUNT_OF_POINTS-1; i++)
-        point[i].distantToEnd = lenghtBetween(point[end].x, point[i].x, point[end].y, point[i].y);
+        point[i].distantToEnd = lenghtBetween(point[i].x, point[i].y, point[end].x, point[end].y);
 
 
       current = start;
@@ -123,7 +123,6 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
       startscore = 0;
 
       while(current != end){
-
       p = 0;
 
       //Leder efter connections der indeholder current point og tildeler Location det punkt current haenger sammen med.
@@ -136,34 +135,42 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
             location = findLocation(point, connection[i].firstPoint);
           }
 
-          if (p > 0) {
-            paths[currentpath][MAX_LEN-2] = a;
-            path++;
-            for(int o = 0; o<=a; o++)
-              paths[path][o] = paths[currentpath][o];
-            paths[path][MAX_LEN-1] = startscore;
-            currentpath = path;
-
-          } else {
-            a++;
+          for(int k = 0; k <= a+1; k++){
+            if (location == paths[currentpath][k]) {
+              duplicate = 1;
+            }
           }
-          p++;
-          //printf("%d\n", paths[currentpath][MAX_LEN-1]);
-          paths[currentpath][a] = location;
-          paths[currentpath][MAX_LEN-1] += lenghtBetween(point[current].x, point[current].y, point[location].x, point[location].y) + point[location].distantToEnd;
-          printf("%d %d %s -> %s %d\n", currentpath, a, point[current].name, point[location].name, paths[currentpath][MAX_LEN-1]);
 
+          if (duplicate != 1) {
+            if (p > 0) {
+              paths[currentpath][MAX_LEN-2] = a;
+              path++;
+              for(int o = 0; o<=a; o++)
+                paths[path][o] = paths[currentpath][o];
+              paths[path][MAX_LEN-1] = startscore;
+              currentpath = path;
+            } else {
+              a++;
+            }
+            p++;
+            //printf("%d\n", paths[currentpath][MAX_LEN-1]);
+            paths[currentpath][a] = location;
+            paths[currentpath][MAX_LEN-1] += lenghtBetween(point[current].x, point[current].y, point[location].x, point[location].y) + point[location].distantToEnd;
+            //printf("%d %d %s -> %s %d %lf %lf\n", currentpath, a, point[current].name, point[location].name, paths[currentpath][MAX_LEN-1], lenghtBetween(point[current].x, point[current].y, point[location].x, point[location].y), point[location].distantToEnd);
+          }
+          duplicate = 0;
         }
       }
+      paths[currentpath][MAX_LEN-2] = a;
 
       //Printer array Paths
-      for(i = 0; i <= currentpath; i++){
+/*      for(i = 0; i <= path; i++){
         for(int o = 0; o <= paths[i][MAX_LEN-2]; o++){
           printf("%d %d %s %d\n", i, o, point[paths[i][o]].name, paths[i][MAX_LEN-1]);
         }
-      }
+      }*/
       min = 999;
-      for (i = 0; i <= currentpath; i++){
+      for (i = 0; i <= path; i++){
         if (paths[i][MAX_LEN-1] <= min) {
           min = paths[i][MAX_LEN-1];
           location = i;
@@ -181,9 +188,15 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
         current = paths[currentpath][i];
       }
 
-      printf("New current path: %d\nNew current point: %s\n", currentpath, point[current].name);
+      //printf("New current path: %d\nNew current point: %s\n", currentpath, point[current].name);
 
     }
+
+      for(int k = 0; k <= paths[currentpath][MAX_LEN-2]; k++)
+        printf("-> %s", point[paths[currentpath][k]].name);
+
+      printf("\n");
+
       //-----------------------------
 
       //Efter at have fundet en rute fra start til slut aendre den end til start og repeater
