@@ -23,8 +23,8 @@ Strandvejen5 (7,14) 2
 Strandvejen8 (13,14) 2
 Anavej3 (12,5) 3
 Anavej10 (11,5) 3
-Kastevej83 (4,-4) 1
-Kastevej8 (10,-4) 3
+Kastetvej83 (4,-4) 1
+Kastetvej8 (10,-4) 3
 Skolebakken6 (21,-1) 3
 Skolebakken30 (21,-4) 3
 Valmuemarken21 (16,-15) 3

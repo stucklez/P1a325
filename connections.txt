@@ -10,7 +10,7 @@ B -- F
 C -- Egevej13
 D -- M
 D -- Egevej1
-E -- Kastevej83
+E -- Kastetvej83
 E -- Q
 E -- R
 F -- Kastetvej8
@@ -25,9 +25,9 @@ K -- Finlandsvej4
 L -- Finlandsvej43
 L -- Pickup3
 L -- Pickup1
-M -- Annavej10
+M -- Anavej10
 N -- D
-N -- Annavej3
+N -- Anavej3
 O -- Skolebakken6
 O -- N
 P -- Skolebakken30
@@ -45,7 +45,7 @@ T -- PostOffice
 T -- Valmuemarken24
 Strandvejen5 -- Strandvejen8
 Anavej3 -- Anavej10
-Kastevej83 -- Kastevej8
+Kastetvej83 -- Kastetvej8
 Skolebakken6 -- Skolebakken30
 Valmuemarken21 -- Valmuemarken24
 Egevej1 -- Egevej13
