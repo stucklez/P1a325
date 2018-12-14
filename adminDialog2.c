@@ -88,11 +88,11 @@ void userDialog (order *pool) {
   if(firstInput == 1){
 		//Start af admin dialog.
       adminInput = 0;
+      while(t!=1){
       printf(" Choose an option below: \n\n");
       printf(" [1] View Current pool\n [2] Continue to route generating \n [0] Exit program\n");
       printf(" Input: ");
       scanf(" %d", &adminInput);
-      while(t!=1){
         //exit the program
         if(adminInput == 0){
             printf(" Program closed\n\n");
@@ -102,7 +102,6 @@ void userDialog (order *pool) {
         if(adminInput == 1){
           printf(" View current pool here\n\n");
           prntOrder(pool);
-          t = 1;
         } else if(adminInput == 2){
           //her går vi til genering.
           printf("Hey her kommer ruten din nar\n\n");
@@ -110,9 +109,6 @@ void userDialog (order *pool) {
           }
         if(adminInput!= 1 && adminInput!= 2 && adminInput!= 0){
             printf("Something went wrong please try again\n");
-            printf(" [1] View Current pool\n [2] Continue to route generating \n [0] Exit program\n");
-            printf(" Input: ");
-            scanf(" %d", &adminInput);
           }
         
         if(adminInput==0){
