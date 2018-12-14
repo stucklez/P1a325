@@ -80,12 +80,12 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
       endpoints = 0, cluster = 1, current = 0, location = 0;
   int paths[MAX_LEN][MAX_LEN], path = 0, a = 0, p = 0, currentpath = 0;
   int score[MAX_LEN], startscore = 0, duplicate = 0;
+  int prev = 0;
 
   start = POSTOFFICE_LOCATION;
 
   //Finder det end point der er taettest på startpunktet.
   for(int j = 0; cluster <= AMOUNT_OF_CLUSTERS; j++){
-    int j = 0;
     min = 999; endpoints = 0;
     for(i = 0; i <= AMOUNT_OF_POINTS-1; i++){
       if (point[i].status == cluster) {
@@ -136,7 +136,7 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
           }
 
           for(int k = 0; k <= a+1; k++){
-            if (location == paths[currentpath][k]) {
+            if (location == paths[currentpath][k] || location == start) {
               duplicate = 1;
             }
           }
@@ -179,13 +179,21 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
 
       //printf("The best choice: %s\n", point[paths[location][0]].name);
       currentpath = location;
-
       startscore = paths[currentpath][MAX_LEN-1];
+      if (paths[currentpath][MAX_LEN-2] != a) {
+        a = paths[currentpath][MAX_LEN-2];
+      }
 
       //printf("Points in current path: %d\n", paths[currentpath][MAX_LEN-2]);
 
+      prev = current;
+
       for(i=0; i<= paths[currentpath][MAX_LEN-2]; i++){
         current = paths[currentpath][i];
+      }
+
+      if(prev == current){
+        paths[currentpath][MAX_LEN-1] += 100;
       }
 
       //printf("New current path: %d\nNew current point: %s\n", currentpath, point[current].name);
