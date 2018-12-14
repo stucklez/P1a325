@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 #define MAX_LEN 50
-#define AMOUNT_OF_POINTS 43
+#define AMOUNT_OF_POINTS 44
 #define AMOUNT_OF_CONNECTIONS 55
 #define AMOUNT_OF_CLUSTERS 3
 #define POSTOFFICE_LOCATION 0
