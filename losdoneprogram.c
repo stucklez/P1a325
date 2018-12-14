@@ -53,7 +53,8 @@ int main(void){
     scanMap(point);
     scanConnections(connection);
     createClusters(point);
-    userDialog(pool, point, connection);
+    createRoute(point, connection);
+    //userDialog(pool, point, connection);
     
   return 0;
 
@@ -141,9 +142,9 @@ void createClusters (points point[AMOUNT_OF_POINTS]) {
         }
         
     }
-    //printf("%d %d %d\n", a,b,c);
+    printf("%d %d %d\n", a,b,c);
     for (i = 0; i < AMOUNT_OF_POINTS; i++) {
-
+      if (strlen(point[i].name) != 1 && strcmp(point[i].name, "PostOffice") != 0) {
         if (lenghtBetween(point[a].x, point[a].y, point[i].x, point[i].y) < lenghtBetween(point[b].x, point[b].y, point[i].x, point[i].y)
         && lenghtBetween(point[a].x, point[a].y, point[i].x, point[i].y) < lenghtBetween(point[c].x, point[c].y, point[i].x, point[i].y)) {
             point[i].status = 1;
@@ -155,11 +156,12 @@ void createClusters (points point[AMOUNT_OF_POINTS]) {
         if (lenghtBetween(point[c].x, point[c].y, point[i].x, point[i].y) < lenghtBetween(point[a].x, point[a].y, point[i].x, point[i].y)
         && lenghtBetween(point[c].x, point[c].y, point[i].x, point[i].y) < lenghtBetween(point[b].x, point[b].y, point[i].x, point[i].y)) {
             point[i].status = 2; 
+        }
     }
     point[a].status = 1; 
     point[b].status = 3;
     point[c].status = 2; 
-    //printf("%s %d\n",point[i].name, point[i].status);
+    printf("%s %d\n",point[i].name, point[i].status);
 }
 }
 
