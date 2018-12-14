@@ -45,7 +45,7 @@ void prntOrder(order *pool){
 
 // Starten til vores brugerdialog.
 void userDialog (order *pool) {
-  int i, j = 0, r = 0,o = 0,k=0;
+  int i, j = 0, r = 0,o = 0,k=0,t=0;
   int usrNumber = 1, firstInput = 0, adminInput = 0, userInput = 0,
       userOrderNr = 0, fileLoaded = 0;
 
@@ -92,21 +92,21 @@ void userDialog (order *pool) {
       printf(" [1] View Current pool\n [2] Continue to route generating \n [0] Exit program\n");
       printf(" Input: ");
       scanf(" %d", &adminInput);
-      while(adminInput!=0){
+      while(t!=1){
         //exit the program
         if(adminInput == 0){
             printf(" Program closed\n\n");
             exit (0);
-        } else if(adminInput < 0 || adminInput > 4){
-          printf(" Invalid input\n\n");
         }
         //View current pool
         if(adminInput == 1){
           printf(" View current pool here\n\n");
           prntOrder(pool);
+          t = 1;
         } else if(adminInput == 2){
           //her går vi til genering.
           printf("Hey her kommer ruten din nar\n\n");
+          t=1;
           }
         if(adminInput!= 1 && adminInput!= 2 && adminInput!= 0){
             printf("Something went wrong please try again\n");
@@ -114,11 +114,12 @@ void userDialog (order *pool) {
             printf(" Input: ");
             scanf(" %d", &adminInput);
           }
-        }
-    if(adminInput==0){
-      printf("Exiting program\n\n");
-      exit(0);
-    }
+        
+        if(adminInput==0){
+          printf("Exiting program\n\n");
+          exit(0);
+          }
+      }
   }
 }
 //Læser filen ind.
