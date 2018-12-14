@@ -11,9 +11,9 @@ void createClusters (points point[AMOUNT_OF_POINTS]) {
         if (strcmp(point[i].name, "Pickup3") == 0) {
             c = i;
         }
-        printf("%d %d %d\n", a,b,c);
+        
     }
-
+    printf("%d %d %d\n", a,b,c);
     for (i = 0; i < AMOUNT_OF_POINTS; i++) {
 
         if (lenghtBetween(point[a].x, point[a].y, point[i].x, point[i].y) < lenghtBetween(point[b].x, point[b].y, point[i].x, point[i].y)
@@ -26,10 +26,11 @@ void createClusters (points point[AMOUNT_OF_POINTS]) {
         }
         if (lenghtBetween(point[c].x, point[c].y, point[i].x, point[i].y) < lenghtBetween(point[a].x, point[a].y, point[i].x, point[i].y)
         && lenghtBetween(point[c].x, point[c].y, point[i].x, point[i].y) < lenghtBetween(point[b].x, point[b].y, point[i].x, point[i].y)) {
-            point[i].status = 2;
-
-        
+            point[i].status = 2; 
     }
+    point[a].status = 1; 
+    point[b].status = 3;
+    point[c].status = 2; 
     printf("%s %d\n",point[i].name, point[i].status);
 }
 }
