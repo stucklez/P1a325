@@ -147,7 +147,7 @@ void createClusters (points point[AMOUNT_OF_POINTS]) {
     //This for loop calculates the distance between the deliveryadresses and the pickup points. And assigns the adresses to the nearest pickup point
     // The pickup points is then the center of the clusters
     for (i = 0; i < AMOUNT_OF_POINTS; i++) {
-      //if (strlen(point[i].name) != 1 && strcmp(point[i].name, "PostOffice") != 0) {
+      if (strlen(point[i].name) != 1 && strcmp(point[i].name, "PostOffice") != 0) {
         if (lenghtBetween(point[a].x, point[a].y, point[i].x, point[i].y) < lenghtBetween(point[b].x, point[b].y, point[i].x, point[i].y)
         && lenghtBetween(point[a].x, point[a].y, point[i].x, point[i].y) < lenghtBetween(point[c].x, point[c].y, point[i].x, point[i].y)) {
             point[i].status = 1;
@@ -160,7 +160,7 @@ void createClusters (points point[AMOUNT_OF_POINTS]) {
         && lenghtBetween(point[c].x, point[c].y, point[i].x, point[i].y) < lenghtBetween(point[b].x, point[b].y, point[i].x, point[i].y)) {
             point[i].status = 2; 
         }
-    //}
+    }
     //This is to make sure the pickuppoints have the same clusternumber as the adresse that is assigned to it 
     point[a].status = 1; 
     point[b].status = 3;
