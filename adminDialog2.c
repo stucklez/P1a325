@@ -45,8 +45,8 @@ void prntOrder(order *pool){
 
 // Starten til vores brugerdialog.
 void userDialog (order *pool) {
-  int i, j, r = 0;
-  int usrNumber = 0, firstInput = 0, adminInput = 0, userInput = 0,
+  int i, j = 0, r = 0,o = 0,k=0;
+  int usrNumber = 1, firstInput = 0, adminInput = 0, userInput = 0,
       userOrderNr = 0, fileLoaded = 0;
 
   /* Prompt for om der skal gives adgang til bruger eller admin dialog*/
@@ -55,13 +55,22 @@ void userDialog (order *pool) {
   scanf("%d", &firstInput);
   /* Bruger dialog: Først bliver der promptet for ordrenumret, så ordren kan findes i den indlæste data.*/
   if (firstInput == 2) {
-    printf("-----ReceiverDialog-----\n\nWrite your Ordernumber\n");
-    scanf("%d", &userOrderNr);
-    for (j = 0; j < MAX_POOL_SIZE; j++) {
-      if (pool[j].odrNumber == userOrderNr) {
-          usrNumber = j;
-        }
+    printf("-----ReceiverDialog-----\n\n");
+    while(0==k){  
+      printf("Write your Ordernumber\n");
+      scanf("%d", &userOrderNr);
+      for(j=0;j<=MAX_POOL_SIZE;j++){
+          if(userOrderNr==pool[j].odrNumber){
+            usrNumber = j;
+            k++;
+          }
       }
+      if(k!=1){
+        printf("Please make sure the ordernumber is correct, and try again!\n");
+      }
+    }
+  
+  
   /* Brugerens pakke blive vist med tilhørende leverings information (Estimeret tid) og brugeren bliver spurgt om de kan modtage pakken*/
     printf("Your package will be delivered between \n\nbla to bla\n\nCan you receive it at that time? If yes [1] --- If no [2]\n");
     scanf("%d", &userInput);
@@ -74,23 +83,20 @@ void userDialog (order *pool) {
     if (userInput != 1 && userInput != 2) {
       printf("Wrong number! Try again\n");
     }
-  } else {
+  }
+  
+  if(firstInput == 1){
 		//Start af admin dialog.
-    while(adminInput != 4){
       adminInput = 0;
       printf(" Choose an option below: \n\n");
-      printf(" [1] View Current pool\n [2] Create manual orders\n [3] See content from external file\n [0] Exit program\n");
-			//Her skal denne mulighed kun komme hvis filen er loaded.
-      if(fileLoaded){
-        printf(" [4] Continue\n\n");
-        }
-        printf(" Input: ");
-        scanf(" %d", &adminInput);
-
+      printf(" [1] View Current pool\n [2] Continue to route generating \n [0] Exit program\n");
+      printf(" Input: ");
+      scanf(" %d", &adminInput);
+      while(adminInput!=0){
         //exit the program
         if(adminInput == 0){
-          printf(" Program closed\n\n");
-          exit (0);
+            printf(" Program closed\n\n");
+            exit (0);
         } else if(adminInput < 0 || adminInput > 4){
           printf(" Invalid input\n\n");
         }
@@ -99,23 +105,20 @@ void userDialog (order *pool) {
           printf(" View current pool here\n\n");
           prntOrder(pool);
         } else if(adminInput == 2){
-          //Manual orders
-				  manual_order(pool);
-        } else if(adminInput == 3){
-          //Print loaded file.
-				for(i=0;i < MAX_POOL_SIZE;i++){
-					printf(" %-12s %-12s | %-15s %-5d | %-5d|\n",
-       		pool[i].firstName, pool[i].lastName, pool[i].address,
-      		pool[i].streetNumber, pool[i].odrNumber);
-				  }
-        } else if(adminInput == 4){
-            //continue to route generator
-            break;
+          //her går vi til genering.
+          printf("Hey her kommer ruten din nar\n\n");
+          }
+        if(adminInput!= 1 && adminInput!= 2 && adminInput!= 0){
+            printf("Something went wrong please try again\n");
+            printf(" [1] View Current pool\n [2] Continue to route generating \n [0] Exit program\n");
+            printf(" Input: ");
+            scanf(" %d", &adminInput);
+          }
         }
-      }
-
-
-  printf(" <<<<<<FUNCTION: ROUTE GENERATING>>>>>>\n\n");
+    if(adminInput==0){
+      printf("Exiting program\n\n");
+      exit(0);
+    }
   }
 }
 //Læser filen ind.
