@@ -151,7 +151,7 @@ void adminDialog(order *pool){
             prntOrder(pool);
           } else if(adminInput == 2){
             //her går vi til genering.
-            printf("Hey her kommer ruten din nar\n\n");
+
             t=1;
             }
           if(adminInput!= 1 && adminInput!= 2 && adminInput!= 0){
@@ -186,15 +186,21 @@ void userDialog (order *pool) {
     mins2 = (pool[usrNumber].time+30) % 60;
 
   /* Brugerens pakke blive vist med tilhørende leverings information (Estimeret tid) og brugeren bliver spurgt om de kan modtage pakken*/
-    printf("%s %s, Your package will be delivered between \n\n %d:%d -- %d:%d \n\nCan you receive it at that time? If yes [1] --- If no [2]\n", pool[usrNumber].firstName, pool[usrNumber].lastName, hours1, mins1, hours2, mins2);
+    printf("%s %s, Your package will be delivered between \n\n %d:%d -- %d:%d"
+           "\n\nAre you able to recieve yout package in this time window?\n"
+           "[1] Yes -- [2] No, I want a new time -- [3] No, I want it delivered to Pickup point.\n",
+           pool[usrNumber].firstName, pool[usrNumber].lastName, hours1, mins1, hours2, mins2);
     scanf("%d", &userInput);
     if (userInput == 1) {
       pool[usrNumber].status = 1;
     }
     if (userInput == 2) {
-      pool[userOrderNr].status = 2;
+      pool[usrNumber].status = 0;
     }
-    if (userInput != 1 && userInput != 2) {
+    if (userInput == 3) {
+      pool[usrNumber].status = 2;
+    }
+    if (userInput < 1 && userInput > 3) {
       printf("Wrong number! Try again\n");
     }
 }
