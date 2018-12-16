@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #define MAX_LEN 50
 #define MAX_POOL_SIZE 20
 #define AMOUNT_OF_POINTS 43
 #define AMOUNT_OF_CONNECTIONS 55
-#define AMOUNT_OF_CLUSTERS 1
 #define POSTOFFICE_LOCATION 0
 #define START_TIME 480
 
@@ -42,12 +42,15 @@ void prntOrder(order *pool);
 void scanMap(points point[AMOUNT_OF_POINTS]);
 void scanConnections(connections connection[AMOUNT_OF_CONNECTIONS]);
 void setPointStatus(points point[AMOUNT_OF_POINTS], order *pool);
-void createRoute(points point[AMOUNT_OF_POINTS], connections connecton[AMOUNT_OF_CONNECTIONS], order *pool);
+void createRoute(points point[AMOUNT_OF_POINTS], connections connecton[AMOUNT_OF_CONNECTIONS], order *pool, int cluster);
 double lenghtBetween(int x1, int y1, int x2, int y2);
 int findLocation(points point[AMOUNT_OF_POINTS], char *name);
 int convertLenToMin(double length);
+void shuffleOrderStatus(order *pool);
+void createClusters (points point[AMOUNT_OF_POINTS], order *pool);
 
 int main(void){
+  int input = 0, clusterinput = 0, clusteramount = 0;
   order pool[MAX_POOL_SIZE];
   points point[AMOUNT_OF_POINTS];
   connections connection[AMOUNT_OF_CONNECTIONS];
@@ -58,12 +61,48 @@ int main(void){
   scanMap(point);
   scanConnections(connection);
 
+
+  printf("Choose cluster setting:\n[1] Automatic cluster creation\n"
+         "[2] Only one cluster\n");
+  scanf("%d", &clusterinput);
+
+  if (clusterinput == 1) {
+    clusteramount = 3;
+    createClusters(point, pool);
+  } else if (clusterinput == 2) {
+    clusteramount = 1;
+    setPointStatus(point, pool);
+  }
+
+  createRoute(point, connection, pool, clusteramount);
+
+  while(input != 4){
+    printf("\n\nThe first times are estimated, what next?:\n[1] View orders. (With status and estimated time.) \n"
+         "[2] Simulate user input for next route creation.\n"
+         "[3] See example on the user interface from a specific order.\n[4] Calculate the final route.\n\n");
+
+    scanf("%d", &input);
+
+    if (input == 1) {
+      prntOrder(pool);
+    } else if (input == 2) {
+      shuffleOrderStatus(pool);
+    } else if (input == 3) {
+      userDialog(pool);
+    } else if (input < 1 || input > 4){
+      printf("Invalid input\n");
+    }
+  }
+
+  if (clusterinput == 1) {
+    createClusters(point, pool);
+  } else if (clusterinput == 2) {
+    setPointStatus(point, pool);
+  }
+
   setPointStatus(point, pool);
 
-  createRoute(point, connection, pool);
-
-  userDialog(pool);
-
+  createRoute(point, connection, pool, clusteramount);
 
   return 0;
 }
@@ -182,7 +221,7 @@ void scanMap(points point[AMOUNT_OF_POINTS]){
   if (map != NULL) {
     printf("Map file loaded\n");
 
-    for(int i = 0; i<=AMOUNT_OF_POINTS-1; i++){
+    for(int i = 0; i<=AMOUNT_OF_POINTS; i++){
       fscanf(map,"%s (%d, %d) %d", point[i].name, &point[i].x, &point[i].y, &point[i].status);
       point[i].associatedOrder = -1;
     }
@@ -220,7 +259,7 @@ void setPointStatus(points point[AMOUNT_OF_POINTS], order *pool){
 }
 
 //Function that creates a route using A* algorithm with the data scanned in "scanMap" & "scanConnections".
-void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_OF_CONNECTIONS], order *pool){
+void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_OF_CONNECTIONS], order *pool, int clusteramount){
   int i = 0, cx = 0, cy = 0, min = 0, start = 0, end = 0,
       endpoints = 0, cluster = 1, current = 0, location = 0,
       startscore = 0, duplicate = 0, prev = 0, combinedtime = START_TIME;
@@ -236,7 +275,7 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
   //Then it finds the shortest path from start to end by using A*.
   //The end point then becomes the new start point and the process repeats
   //Until there are no more endpoints.
-  for(int j = 0; cluster <= AMOUNT_OF_CLUSTERS; j++){
+  for(int j = 0; cluster <= clusteramount; j++){
     min = 999; endpoints = 0;
     for(i = 0; i <= AMOUNT_OF_POINTS-1; i++){
       if (point[i].status == cluster) {
@@ -248,7 +287,7 @@ void createRoute(points point[AMOUNT_OF_POINTS], connections connection[AMOUNT_O
       }
     }
     //If there is no more endpoints left, it will set the last endpoint to the Post office.
-    if (cluster == AMOUNT_OF_CLUSTERS && endpoints == 0) {
+    if (cluster == clusteramount && endpoints == 0) {
       end = POSTOFFICE_LOCATION; endpoints++; cluster++;
     }
 
@@ -394,4 +433,74 @@ int findLocation(points point[AMOUNT_OF_POINTS], char *name){
 
 int convertLenToMin(double length){
   return ((length * 100) / 333) + 2;
+}
+
+void shuffleOrderStatus(order *pool){
+  srand(time(NULL));
+  for(int i = 0; i <= MAX_POOL_SIZE; i++){
+    pool[i].status = rand() % 3;
+    //printf("%s %d\n", pool[i].address, pool[i].status);
+  }
+  printf("\nThe order statuses are now shuffled.\n\n");
+}
+
+// Function that creates the delivery clusters
+void createClusters (points point[AMOUNT_OF_POINTS], order *pool) {
+    int a = 0, b = 0, c = 0, i, j;
+//This for loop finds the location of the Pickup points in the array
+    for (i = 0; i <= AMOUNT_OF_POINTS; i++) {
+      //printf("%d %s\n", i, point[i].name);
+        if (strcmp(point[i].name, "Pickup1") == 0) {
+            a = i;
+            point[i].status = 0;
+        }
+        if (strcmp(point[i].name, "Pickup2") == 0) {
+            b = i;
+            point[i].status = 0;
+        }
+        if (strcmp(point[i].name, "Pickup3") == 0) {
+            c = i;
+        }
+      }
+    //printf("%d %d %d\n", a,b,c);
+
+    //This for loop calculates the distance between the deliveryadresses and the pickup points. And assigns the adresses to the nearest pickup point
+    // The pickup points is then the center of the clusters
+    for (i = 0; i <= MAX_POOL_SIZE; i++) {
+      for (j = 0; j <= AMOUNT_OF_POINTS; j++) {
+
+      if (strcmp(pool[i].address, point[j].name) == 0 && (pool[i].status == 1 || pool[i].status == 2)) {
+        if (lenghtBetween(point[a].x, point[a].y, point[i].x, point[i].y) < lenghtBetween(point[b].x, point[b].y, point[i].x, point[i].y)
+        && lenghtBetween(point[a].x, point[a].y, point[i].x, point[i].y) < lenghtBetween(point[c].x, point[c].y, point[i].x, point[i].y)) {
+            if (pool[i].status == 1) {
+              point[j].status = 1;
+              point[j].associatedOrder = i;
+            }else if (pool[i].status == 2) {
+              point[a].status = 1;
+            }
+        }
+        if (lenghtBetween(point[b].x, point[b].y, point[i].x, point[i].y) < lenghtBetween(point[a].x, point[a].y, point[i].x, point[i].y)
+        && lenghtBetween(point[b].x, point[b].y, point[i].x, point[i].y) < lenghtBetween(point[c].x, point[c].y, point[i].x, point[i].y)) {
+          if (pool[i].status == 1) {
+            point[j].status = 3;
+            point[j].associatedOrder = i;
+          }else if (pool[i].status == 2) {
+            point[a].status = 3;
+          }
+        }
+        if (lenghtBetween(point[c].x, point[c].y, point[i].x, point[i].y) < lenghtBetween(point[a].x, point[a].y, point[i].x, point[i].y)
+        && lenghtBetween(point[c].x, point[c].y, point[i].x, point[i].y) < lenghtBetween(point[b].x, point[b].y, point[i].x, point[i].y)) {
+          if (pool[i].status == 1) {
+            point[j].status = 2;
+            point[j].associatedOrder = i;
+          }else if (pool[i].status == 2) {
+            point[a].status = 2;
+          }
+        }
+      }
+    }
+    //This is to make sure the pickuppoints have the same clusternumber as the adresse that is assigned to it
+
+    //printf("%s %d\n",pool[i].firstName, pool[i].status);
+  }
 }
