@@ -4,13 +4,15 @@
 #include <math.h>
 #include <time.h>
 
-#define MAX_LEN 50
-#define MAX_POOL_SIZE 20
+#define MAX_LEN 50 //This is used for various arrays for uknown sizes under 50.
+#define MAX_POOL_SIZE 20 //This indicates how many orders are being scanned into the array of orders.
 #define AMOUNT_OF_POINTS 43
 #define AMOUNT_OF_CONNECTIONS 55
 #define POSTOFFICE_LOCATION 0
-#define START_TIME 480
+//START_TIME is the time of day the delivery route are set to start.
+#define START_TIME 480 //480 minutes corrispond to 8:00
 
+//Struct to store pending orders.
 struct order {
   int status;
   char address[MAX_LEN];
@@ -20,6 +22,7 @@ struct order {
 };
 typedef struct order order;
 
+//Struct to store point information for the road network.
 struct points{
   char name[MAX_LEN];
   int x, y;
@@ -29,12 +32,14 @@ struct points{
 };
 typedef struct points points;
 
+//Struct that stores the connections inbetween points.
 struct connections{
   char firstPoint[MAX_LEN];
   char secondPoint[MAX_LEN];
 };
 typedef struct connections connections;
 
+//Prototypes
 void scanOrders(order *pool);
 void adminDialog(order *pool, int progress);
 void userDialog(order *pool);
@@ -49,19 +54,23 @@ int convertLenToMin(double length);
 void shuffleOrderStatus(order *pool);
 void createClusters (points point[AMOUNT_OF_POINTS], order *pool);
 
+//Main
 int main(void){
   int input = 0, clusterinput = 0, clusteramount = 0, progress = 0;
   order pool[MAX_POOL_SIZE];
   points point[AMOUNT_OF_POINTS];
   connections connection[AMOUNT_OF_CONNECTIONS];
 
+  //Starts out by scanning the orderlist.
 	scanOrders(pool);
+  //Then prompting the admin dialog.
   adminDialog(pool, progress);
 
+  //Scans the road network.
   scanMap(point);
   scanConnections(connection);
 
-
+  //Chose if you want to calculate clusters or only use one cluster.
   printf("Choose cluster setting:\n[1] Automatic cluster creation\n"
          "[2] Only one cluster\n");
   scanf("%d", &clusterinput);
@@ -74,9 +83,11 @@ int main(void){
     setPointStatus(point, pool);
   }
 
+  //Creates route between order adresses by the determined clusters
   createRoute(point, connection, pool, clusteramount);
   progress++;
 
+  //Admin dialog for next step after first route creation
   while(input != 4){
     printf("\n\nThe first times are estimated, what next?:\n[1] View orders. (With status and estimated time.) \n"
          "[2] Simulate user input for next route creation.\n"
@@ -85,27 +96,31 @@ int main(void){
     scanf("%d", &input);
 
     if (input == 1) {
+      //View orders. (With first time window and status.)
       prntOrder(pool, progress);
     } else if (input == 2) {
+      //Shuffle order status to simulate user outcome.
       shuffleOrderStatus(pool);
     } else if (input == 3) {
+      //User dialog for a specific order.
       userDialog(pool);
     } else if (input < 1 || input > 4){
       printf("Invalid input\n");
     }
   }
 
+  //Uses same cluster method for second route.
   if (clusterinput == 1) {
     createClusters(point, pool);
   } else if (clusterinput == 2) {
     setPointStatus(point, pool);
   }
 
-  setPointStatus(point, pool);
-
+  //Second route creation.
   createRoute(point, connection, pool, clusteramount);
   progress++;
 
+  //Final admin dialog
   input = 0;
   while(input != 2){
     printf("[1] View final order times. / [2] Exit program.\n");
@@ -118,11 +133,11 @@ int main(void){
       printf("Wrong input\n");
     }
   }
-  
+
   return 0;
 }
 
-//Læser filen ind.
+//Function that scans the orderlist from the textfile "orderlist.txt".
 void scanOrders (order *pool) {
   int i;
   FILE *orderlist;
@@ -143,12 +158,13 @@ void scanOrders (order *pool) {
   }
 }
 
+//First admin dialog before route creation.
 void adminDialog(order *pool, int progress){
   int i, j, r = 0, t = 0;
   int usrNumber = 0, firstInput = 0, adminInput = 0, userInput = 0,
       userOrderNr = 0, fileLoaded = 0;
 
-      //Start af admin dialog.
+      //Start of admin dialog.
         adminInput = 0;
         while(t!=1){
         printf(" Choose an option below: \n\n");
@@ -165,21 +181,16 @@ void adminDialog(order *pool, int progress){
             printf(" View current pool here\n\n");
             prntOrder(pool, progress);
           } else if(adminInput == 2){
-            //her går vi til genering.
+            //Exitting function to continue to route creation
 
             t=1;
             }
           if(adminInput!= 1 && adminInput!= 2 && adminInput!= 0){
               printf("Something went wrong please try again\n");
             }
-
-          if(adminInput==0){
-            printf("Exiting program\n\n");
-            exit(0);
-            }
           }
 }
-// Starten til vores brugerdialog.
+// Function to view specific order from user perspective.
 void userDialog (order *pool) {
   int i, j, r = 0;
   int usrNumber = 0, firstInput = 0, adminInput = 0, userInput = 0,
@@ -200,32 +211,37 @@ void userDialog (order *pool) {
     hours2 = (pool[usrNumber].time+30) / 60;
     mins2 = (pool[usrNumber].time+30) % 60;
 
-  /* Brugerens pakke blive vist med tilhørende leverings information (Estimeret tid) og brugeren bliver spurgt om de kan modtage pakken*/
+    // The user gets a time window where they can answer if they can recieve the package in the givin time window.
+    // If no will they get to chose between new date or pickup point.
     printf("%s %s, Your package will be delivered between \n\n %d:%d -- %d:%d"
            "\n\nAre you able to recieve yout package in this time window?\n"
            "[1] Yes -- [2] No, I want a new time -- [3] No, I want it delivered to Pickup point.\n",
            pool[usrNumber].firstName, pool[usrNumber].lastName, hours1, mins1, hours2, mins2);
     scanf("%d", &userInput);
     if (userInput == 1) {
+      // status 1 = mark address as end point for second route creation.
       pool[usrNumber].status = 1;
     }
     if (userInput == 2) {
+      // status 0 = address gets ignored for second route creation.
       pool[usrNumber].status = 0;
     }
     if (userInput == 3) {
+      // status 2 = pickuppoint nearest to the address is marked as active endpoint.
       pool[usrNumber].status = 2;
     }
     if (userInput < 1 && userInput > 3) {
-      printf("Wrong number! Try again\n");
+      printf("Invalid input\n");
     }
 }
 
-// Printer nuværende order pool.
+// Prints order and current time window, if calculated.
 void prntOrder(order *pool, int progress){
   int i, hours1 = 0, hours2 = 0, mins1 = 0, mins2 = 0;
   for (i = 0; i < MAX_POOL_SIZE; i++) {
     printf(" Status: %d", pool[i].status);
 
+    //Printing the actual time window.
     if (progress == 0) {
       printf(" Time: N/A\n");
     } else if (pool[i].status == 1 && progress == 1) {
@@ -290,6 +306,8 @@ void scanConnections(connections connection[AMOUNT_OF_CONNECTIONS]){
   }
 }
 
+// Function that sets all active orders to one cluster.
+// Gets used if the one cluster option chosen in admin dialog.
 void setPointStatus(points point[AMOUNT_OF_POINTS], order *pool){
   for(int i = 0; i <= MAX_POOL_SIZE; i++){
     for(int j = 0; j <= AMOUNT_OF_POINTS; j++){
@@ -474,15 +492,16 @@ int findLocation(points point[AMOUNT_OF_POINTS], char *name){
   }
 }
 
+// Function that converts lenght (from cordinates) into time/minutes.
 int convertLenToMin(double length){
   return ((length * 100) / 333) + 2;
 }
 
+//Choosing random order status to simulate user outcome for second route creation.
 void shuffleOrderStatus(order *pool){
   srand(time(NULL));
   for(int i = 0; i <= MAX_POOL_SIZE; i++){
     pool[i].status = rand() % 3;
-    //printf("%s %d\n", pool[i].address, pool[i].status);
   }
   printf("\nThe order statuses are now shuffled.\n\n");
 }
@@ -490,7 +509,7 @@ void shuffleOrderStatus(order *pool){
 // Function that creates the delivery clusters
 void createClusters (points point[AMOUNT_OF_POINTS], order *pool) {
     int a = 0, b = 0, c = 0, i, j;
-//This for loop finds the location of the Pickup points in the array
+    //This for loop finds the location of the Pickup points in the array
     for (i = 0; i <= AMOUNT_OF_POINTS; i++) {
       //printf("%d %s\n", i, point[i].name);
         if (strcmp(point[i].name, "Pickup1") == 0) {
@@ -505,7 +524,7 @@ void createClusters (points point[AMOUNT_OF_POINTS], order *pool) {
             c = i;
         }
       }
-    //printf("%d %d %d\n", a,b,c);
+
 
     //This for loop calculates the distance between the deliveryadresses and the pickup points. And assigns the adresses to the nearest pickup point
     // The pickup points is then the center of the clusters
@@ -542,8 +561,5 @@ void createClusters (points point[AMOUNT_OF_POINTS], order *pool) {
         }
       }
     }
-    //This is to make sure the pickuppoints have the same clusternumber as the adresse that is assigned to it
-
-    //printf("%s %d\n",pool[i].firstName, pool[i].status);
   }
 }
