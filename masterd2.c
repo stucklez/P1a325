@@ -36,9 +36,9 @@ struct connections{
 typedef struct connections connections;
 
 void scanOrders(order *pool);
-void adminDialog(order *pool);
+void adminDialog(order *pool, int progress);
 void userDialog(order *pool);
-void prntOrder(order *pool);
+void prntOrder(order *pool, int progress);
 void scanMap(points point[AMOUNT_OF_POINTS]);
 void scanConnections(connections connection[AMOUNT_OF_CONNECTIONS]);
 void setPointStatus(points point[AMOUNT_OF_POINTS], order *pool);
@@ -50,13 +50,13 @@ void shuffleOrderStatus(order *pool);
 void createClusters (points point[AMOUNT_OF_POINTS], order *pool);
 
 int main(void){
-  int input = 0, clusterinput = 0, clusteramount = 0;
+  int input = 0, clusterinput = 0, clusteramount = 0, progress = 0;
   order pool[MAX_POOL_SIZE];
   points point[AMOUNT_OF_POINTS];
   connections connection[AMOUNT_OF_CONNECTIONS];
 
 	scanOrders(pool);
-  adminDialog(pool);
+  adminDialog(pool, progress);
 
   scanMap(point);
   scanConnections(connection);
@@ -75,6 +75,7 @@ int main(void){
   }
 
   createRoute(point, connection, pool, clusteramount);
+  progress++;
 
   while(input != 4){
     printf("\n\nThe first times are estimated, what next?:\n[1] View orders. (With status and estimated time.) \n"
@@ -84,7 +85,7 @@ int main(void){
     scanf("%d", &input);
 
     if (input == 1) {
-      prntOrder(pool);
+      prntOrder(pool, progress);
     } else if (input == 2) {
       shuffleOrderStatus(pool);
     } else if (input == 3) {
@@ -103,7 +104,21 @@ int main(void){
   setPointStatus(point, pool);
 
   createRoute(point, connection, pool, clusteramount);
+  progress++;
 
+  input = 0;
+  while(input != 2){
+    printf("[1] View final order times. / [2] Exit program.\n");
+    scanf("%d", &input);
+    if (input == 1) {
+      prntOrder(pool, progress);
+    } else if (input == 2) {
+      printf("Exiting program.\n");
+    } else {
+      printf("Wrong input\n");
+    }
+  }
+  
   return 0;
 }
 
@@ -128,7 +143,7 @@ void scanOrders (order *pool) {
   }
 }
 
-void adminDialog(order *pool){
+void adminDialog(order *pool, int progress){
   int i, j, r = 0, t = 0;
   int usrNumber = 0, firstInput = 0, adminInput = 0, userInput = 0,
       userOrderNr = 0, fileLoaded = 0;
@@ -148,7 +163,7 @@ void adminDialog(order *pool){
           //View current pool
           if(adminInput == 1){
             printf(" View current pool here\n\n");
-            prntOrder(pool);
+            prntOrder(pool, progress);
           } else if(adminInput == 2){
             //her går vi til genering.
 
@@ -206,13 +221,35 @@ void userDialog (order *pool) {
 }
 
 // Printer nuværende order pool.
-void prntOrder(order *pool){
-  int i;
+void prntOrder(order *pool, int progress){
+  int i, hours1 = 0, hours2 = 0, mins1 = 0, mins2 = 0;
   for (i = 0; i < MAX_POOL_SIZE; i++) {
-    printf(" Status: %d\n"
-           " Adress: %s\n Order number: %d\n"
+    printf(" Status: %d", pool[i].status);
+
+    if (progress == 0) {
+      printf(" Time: N/A\n");
+    } else if (pool[i].status == 1 && progress == 1) {
+      hours1 = (pool[i].time-90) / 60;
+      mins1 = (pool[i].time-90) % 60;
+
+      hours2 = (pool[i].time+90) / 60;
+      mins2 = (pool[i].time+90) % 60;
+      printf(" Time: %d:%d -- %d:%d\n", hours1, mins1, hours2, mins2);
+    } else if (pool[i].status == 1 && progress == 2) {
+      hours1 = (pool[i].time-15) / 60;
+      mins1 = (pool[i].time-15) % 60;
+
+      hours2 = (pool[i].time+15) / 60;
+      mins2 = (pool[i].time+15) % 60;
+      printf(" Time: %d:%d -- %d:%d\n", hours1, mins1, hours2, mins2);
+    } else if (pool[i].status == 0) {
+      printf(" (The package is schedueled to another day.)\n");
+    } else if (pool[i].status == 2) {
+      printf(" (The package is being delivered to the nearest pickup point.)\n");
+    }
+
+    printf(" Adress: %s\n Order number: %d\n"
            " Name: %s %s\n\n",
-           pool[i].status,
            pool[i].address, pool[i].odrNumber,
            pool[i].firstName, pool[i].lastName);
   }
